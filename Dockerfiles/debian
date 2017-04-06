@@ -1,0 +1,32 @@
+FROM multiarch/debian-debootstrap:amd64-jessie
+MAINTAINER Daniel P. Smith <dpsmith@apertussolutions.com>
+
+RUN apt-get update && \
+        apt-get install -yq openssh-server openssl git schroot sbuild \
+	reprepro dh-make dkms pkg-config && \
+        rm -rf /var/lib/apt-lists/* && \
+
+# Add "repo" tool (used by many Yocto-based projects)
+RUN curl http://storage.googleapis.com/git-repo-downloads/repo > /usr/local/bin/repo && \
+        chmod a+x /usr/local/bin/repo
+
+RUN useradd -Ums /bin/bash -p build -u [UID] build && \
+        usermod -aG sudo build
+
+RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
+    locale-gen
+
+RUN mkdir /root/.gnupg && \
+	sbuild-createchroot --arch=i386  --include=build-essential,dh-make,dkms \
+		 wheezy /home/chroots/wheezy-i386 http://ftp.us.debian.org && \
+	sbuild-createchroot --arch=amd64  --include=build-essential,dh-make,dkms \
+		 wheezy /home/chroots/wheezy-amd64 http://ftp.us.debian.org && \
+	sbuild-createchroot --arch=i386  --include=build-essential,dh-make,dkms \
+		 jessie /home/chroots/jessie-i386 http://ftp.us.debian.org && \
+	sbuild-createchroot --arch=amd64  --include=build-essential,dh-make,dkms \
+		 jessie /home/chroots/jessie-amd64 http://ftp.us.debian.org && \
+	sbuild-update --keygen && sbuild-adduser build
+
+ENV LANG en_US.utf8
+USER build
+WORKDIR /home/build

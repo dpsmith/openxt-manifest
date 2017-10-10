@@ -19,7 +19,7 @@
   <project remote="github" name="apertussolutions/meta-servicevm" revision="master" force-path="yes" path="repos/meta-servicevm"/>
   <project remote="github" name="apertussolutions/xenclient-oe" revision="stable6-oe-refactor" force-path="yes" path="repos/xenclient-oe">
 	  <copyfile dest="host-env" src="../../.repo/manifests/files/host-env"/>
-	  <copyfile dest="build-env" src="../../.repo/manifests/files/build-env"/>
+	  <copyfile dest="openxt-env" src="../../.repo/manifests/files/openxt-env"/>
   </project>
 
   <project remote="github" name="openxt/blktap" path="openxt/blktap"/>
